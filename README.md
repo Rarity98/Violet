@@ -85,8 +85,10 @@ python -m http.server 8899
 ## 已知事项
 
 - 字体使用 Google Fonts（Inter / JetBrains Mono），离线时会回退到系统字体栈，版式不会错乱。
-- 下载按钮已指向 `downloads/BridgeLink_4.7.exe`（随仓库分发，约 22.5MB），点击直接下载；
-  GitHub Release 上另附 `BridgeLink.exe` 与 `BridgeLink-headless.exe`（约 7.8MB，免 GUI 版）；
+- 下载按钮已指向 GitHub Release 资产
+  `https://github.com/Rarity98/Violet/releases/download/v4.7/BridgeLink.exe`（约 22.5MB）；
+  仓库内 `downloads/BridgeLink_4.7.exe` 是同一份文件的副本，
+  Release 上另附 `BridgeLink-headless.exe`（约 7.8MB，免 GUI 版）；
   「查看源码」指向本仓库。
 - 剪贴板复制依赖 `navigator.clipboard`，在非安全上下文（如 `file://`）下会自动回退到
   `execCommand`，两者都不可用时提示「复制失败」。
