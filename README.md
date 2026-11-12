@@ -14,18 +14,19 @@ python -m http.server 8899
 ## 目录
 
 ```
-bridgelink_site/
+.
 ├─ index.html              页面结构（全部内容）
 ├─ assets/
 │  ├─ css/style.css        设计系统 + 全部组件样式 + 动效关键帧
 │  ├─ js/main.js           交互与过渡动效
 │  └─ img/app_icon.png     应用图标（取自软件包）
-└─ _shots/                 渲染截图（验证用，可删）
+└─ downloads/
+   └─ BridgeLink_4.7.exe   Windows 免安装包（随仓库分发）
 ```
 
 ## 设计系统
 
-配色令牌与应用内 `BridgeLink/bridgelink/ui/theme.py` 同源，改一处两边同步。
+配色令牌与应用内 `ui/theme.py` 同源，改一处两边同步。
 
 - **主题**：浅色 / 深色 / 午夜 / 北欧极简 / 柔和暖阳 / 跟随系统 —— 与软件内 6 套主题一一对应。
   「外观定制」板块可实时切换**右侧预览面板**，该选择**只影响预览**；
@@ -73,13 +74,13 @@ bridgelink_site/
 
 - `README.md` —— 功能结构、30 秒上手、排查表、已知限制
 - `交付说明.md` —— 4.7 C++17 + Qt6 重写版的技术对照表与本机实测结果
-- `BridgeLink/bridgelink/ui/theme.py` —— 6 套主题与 6 种强调色的真实色值
-- `BridgeLink/bridgelink/i18n.py` —— 9 种界面语言
+- 软件包内 `ui/theme.py` —— 6 套主题与 6 种强调色的真实色值
+- 软件包内 `i18n.py` —— 9 种界面语言
 
 ## 已知事项
 
 - 字体使用 Google Fonts（Inter / JetBrains Mono），离线时会回退到系统字体栈，版式不会错乱。
-- 下载按钮已指向 `downloads/LanKVM_v4.5.exe`（随仓库分发，约 26MB），点击直接下载；
+- 下载按钮已指向 `downloads/BridgeLink_4.7.exe`（随仓库分发，约 26MB），点击直接下载；
   「查看源码」指向本仓库。
 - 剪贴板复制依赖 `navigator.clipboard`，在非安全上下文（如 `file://`）下会自动回退到
   `execCommand`，两者都不可用时提示「复制失败」。
