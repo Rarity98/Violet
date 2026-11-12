@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BridgeLink 4.7 — 一套键鼠，管住所有电脑 | 局域网键鼠共享 / 远程控制 / 剪贴板同步</title>
-<meta name="description" content="BridgeLink 是一款局域网键鼠共享与远程控制工具：鼠标撞边自动跨屏、一键接管任意设备、剪贴板文字/图片/文件三合一同步。C++17 + Qt6 Widgets 原生实现，Windows 免安装包 25MB。">
-<meta name="keywords" content="BridgeLink,键鼠共享,远程控制,剪贴板同步,跨屏,KVM,局域网,Windows,Linux,C++,Qt6,开源">
+<meta name="description" content="BridgeLink 是一款局域网键鼠共享与远程控制工具：鼠标撞边自动跨屏、一键接管任意设备、剪贴板文字/图片/文件三合一同步。纯 Python + PyQt6 实现，Windows 免安装包 23MB，支持 Windows / Linux / macOS。">
+<meta name="keywords" content="BridgeLink,键鼠共享,远程控制,剪贴板同步,跨屏,KVM,局域网,Windows,Linux,macOS,Python,PyQt6,开源">
 <meta property="og:title" content="BridgeLink 4.7 — 一套键鼠，管住所有电脑">
-<meta property="og:description" content="键鼠共享 · 远程控制 · 剪贴板三合一同步。C++17 + Qt6 Widgets 原生实现，Windows 免安装包 25MB。">
+<meta property="og:description" content="键鼠共享 · 远程控制 · 剪贴板三合一同步。纯 Python + PyQt6 实现，Windows 免安装包 23MB，支持 Windows / Linux / macOS。">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/img/app_icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -111,9 +111,9 @@
       </div>
 
       <dl class="hero__stats reveal" data-reveal="up" data-delay="280">
-        <div><dt data-count="25" data-prefix="" data-suffix=" MB">0</dt><dd>Windows 免安装包</dd></div>
+        <div><dt data-count="23" data-prefix="" data-suffix=" MB">0</dt><dd>Windows 免安装包</dd></div>
         <div><dt data-count="9" data-suffix=" 种">0</dt><dd>界面语言</dd></div>
-        <div><dt data-count="6" data-suffix=" 套">0</dt><dd>内置主题</dd></div>
+        <div><dt data-count="5" data-suffix=" 套">0</dt><dd>内置主题</dd></div>
         <div><dt data-count="0" data-text="不限">不限</dt><dd>可接设备数</dd></div>
       </dl>
     </div>
@@ -195,7 +195,7 @@
   <div class="marquee__track" id="marqueeTrack">
     <span>键鼠共享</span><i>·</i><span>远程控制</span><i>·</i><span>剪贴板三合一</span><i>·</i>
     <span>跨屏拖拽复制粘贴</span><i>·</i><span>唯一光标归属</span><i>·</i><span>防套娃保护</span><i>·</i>
-    <span>9 种语言</span><i>·</i><span>6 套主题</span><i>·</i><span>7 种强调色</span><i>·</i>
+    <span>9 种语言</span><i>·</i><span>5 套主题</span><i>·</i><span>6 种强调色</span><i>·</i>
     <span>界面缩放 80%~160%</span><i>·</i><span>自定义背景图</span><i>·</i><span>托盘常驻</span><i>·</i>
   </div>
 </div>
@@ -253,8 +253,26 @@
         <p>文字、图片、文件三路同步，还能跨屏直接 Ctrl+C / Ctrl+V。拖动一个文件到隔壁屏幕，落点直接就位。</p>
         <ul class="ticks">
           <li>只在光标位于对端时接管，本机操作不受影响</li>
-          <li>跨屏拖拽复制粘贴，4.7 全链路打通</li>
+          <li>文字 / 图片跨屏 Ctrl+C·V，端到端验收通过</li>
+          <li>4.7 新增贴边感应带，文件直接甩到对面屏幕</li>
           <li>单批上限、接收目录、进度条</li>
+        </ul>
+      </article>
+
+      <article class="bcard bcard--wide reveal" data-reveal="up" data-delay="200" data-tilt>
+        <div class="bcard__glow" aria-hidden="true"></div>
+        <div class="bcard__col">
+          <div class="bcard__ic">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4M2.5 8.5h19"/></svg>
+          </div>
+          <h3>三平台 · 免 GUI 模式</h3>
+          <p>Windows、Linux（X11）、macOS（CoreGraphics）各有独立注入后端。
+             还有一套纯标准库 HTTP+SSE 的浏览器控制端，<strong>下载到开发板就能用</strong>，不需要装图形界面。</p>
+        </div>
+        <ul class="ticks">
+          <li>Windows <code>SendInput</code> / Linux XTest / macOS CGEvent</li>
+          <li>非 Windows 上 import 不再崩</li>
+          <li>免 GUI 版：8.1MB，可开机自启</li>
         </ul>
       </article>
     </div>
@@ -437,53 +455,60 @@
   <div class="wrap">
     <header class="sec-head">
       <span class="sec-head__kicker reveal" data-reveal="up">4.7 更新</span>
-      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">原生重写，<br>一比一复刻</h2>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">改名 BridgeLink，<br>贴边拖拽文件</h2>
       <p class="sec-head__lead reveal" data-reveal="up" data-delay="120">
-        4.7 把整套实现从 Python + PyQt6 换成 <strong>C++17 + Qt6 Widgets</strong> 原生重写——
-        不是翻译，是按同一套协议重新实现。功能、布局、文案逐项对齐，
-        并把上一版遗留的五条真实反馈一并修掉。
+        4.7 把项目从 LanKVM 正式更名为 <strong>BridgeLink</strong>，包目录、可执行文件、
+        配置目录、接收目录、环境变量全部改完；同时新增
+        <strong>贴边感应带</strong>——从资源管理器按住文件往屏幕边缘一拖，
+        就能直接甩到对面电脑上（仿「无界」的 OLE 方式）。
       </p>
     </header>
 
     <div class="fixes">
       <article class="fix reveal" data-reveal="up" data-tilt>
         <span class="fix__no">01</span>
-        <h3>C++ 原生内核，协议字节级一致</h3>
-        <p>帧格式、魔数、消息编号、负载布局全部与旧版<strong>一字不改</strong>，
-           新旧客户端可直接互联。输入注入按平台编译：
-           Windows <code>SendInput</code>、Linux <code>XTest</code>、macOS <code>CGEvent</code>。</p>
-        <div class="fix__tags"><span>QDataStream</span><span>三平台注入</span><span>防回环注入</span></div>
+        <h3>全量改名，旧版仍可互联</h3>
+        <p>Python 包目录 <code>lankvm/</code> → <code>bridgelink/</code>，
+           可执行文件、配置目录 <code>%APPDATA%\BridgeLink\</code>、
+           接收目录、环境变量 <code>BRIDGELINK_CONFIG</code> 全部换新。
+           网络协议帧格式、端口、握手流程<strong>完全不变</strong>，新旧版本之间照样能互联。</p>
+        <div class="fix__tags"><span>包目录改名</span><span>协议不变</span><span>新旧互联</span></div>
       </article>
       <article class="fix reveal" data-reveal="up" data-delay="80" data-tilt>
         <span class="fix__no">02</span>
-        <h3>界面逐页对齐，不是"看着差不多"</h3>
-        <p>六页界面逐项比对，共修掉 <strong>20 处实质差异</strong>：背景图系统整个缺失、
-           日志页缺导出、剪贴板勾选框默认全空、状态栏文案不对、置顶图标无状态……
-           背景图四种填充模式 × 三档模糊与旧版<strong>逐像素一致（rgb_max = 0）</strong>。</p>
-        <div class="fix__tags"><span>20 处差异</span><span>像素级比对</span><span>右键菜单 8 项</span></div>
+        <h3>贴边感应带，文件真能甩过去</h3>
+        <p>上一版靠读剪贴板快照拿载荷，但资源管理器拖文件时
+           <code>CF_HDROP</code> 只存在于拖动源的 OLE 数据对象里，
+           剪贴板里根本没东西——所以那条路<strong>从未真正跑通过</strong>。
+           4.7 改用系统 OLE 放置目标接住拖拽，这才是唯一可靠的载荷来源。</p>
+        <div class="fix__tags"><span>OLE 放置目标</span><span>CF_HDROP</span><span>保留目录结构</span></div>
       </article>
       <article class="fix reveal" data-reveal="up" data-delay="160" data-tilt>
         <span class="fix__no">03</span>
-        <h3>355 个界面词条 × 9 语言，即时生效</h3>
-        <p>旧版只做了菜单栏的 68 个词条，这一版把 355 个 key 全量接入，
-           切换语言后<strong>整个界面即时重译</strong>，侧栏、按钮、状态栏、说明文字同步切换，不用重启。</p>
-        <div class="fix__tags"><span>355 × 9</span><span>即时重译</span><span>6 主题 × 6 强调色</span></div>
+        <h3>感应带平时完全不创建</h3>
+        <p>常驻会挡住屏幕最边缘几个像素的点击。现在只在<strong>左键按住且拖动超过 8 像素</strong>
+           时临时铺一条 4 像素透明带，<code>alpha=1</code> 肉眼不可见但仍参与命中测试，
+           <code>WM_NCHITTEST</code> 返回 <code>HTTRANSPARENT</code> 让普通点击照旧穿透。
+           拿到文件立刻给拖动源发 Esc，避免资源管理器把文件就地复制。</p>
+        <div class="fix__tags"><span>按需创建</span><span>8px 阈值</span><span>即时拆带</span></div>
       </article>
       <article class="fix reveal" data-reveal="up" data-delay="240" data-tilt>
         <span class="fix__no">04</span>
-        <h3>所有按钮都真的能按下去</h3>
-        <p>自定义按钮基类原本<strong>一次点击发两次信号</strong>，导致勾选态翻两次抵消回原值——
-           左侧菜单的"收起 / 展开"就是因此失效的。现在点击只触发一次，
-           并新增全量回归：<strong>53 个可用按钮逐个模拟按下抬起</strong>，断言每个恰好触发一次。</p>
-        <div class="fix__tags"><span>单次点击语义</span><span>53 按钮全量回归</span><span>文本完整性扫描</span></div>
+        <h3>双路径并存，互不冲突</h3>
+        <p>v4.6 的剪贴板路径负责文字/图片，v4.7 的感应带路径负责文件/文件夹。
+           感应带接管后会<strong>抑制剪贴板路径</strong>（<code>_band_owned</code> 标记），
+           否则同一批文件会被发两遍，对端收到 <code>xxx(1).txt</code>。
+           接收端不覆盖用户剪贴板，批次号带 <code>band:</code> 前缀区分。</p>
+        <div class="fix__tags"><span>剪贴板路径</span><span>感应带路径</span><span>批次去重</span></div>
       </article>
       <article class="fix reveal" data-reveal="up" data-delay="320" data-tilt>
         <span class="fix__no">05</span>
-        <h3>跨屏拖拽真正落地</h3>
-        <p>旧版整条链路都断着：两个信号只发不接、跨屏逻辑从没被调用、
-           载荷被当普通剪贴板同步写回自己。4.7 把三段全部接上，
-           文字与图片可跨屏拖拽复制粘贴，抗乱序已验证。</p>
-        <div class="fix__tags"><span>三段式载荷中转</span><span>抗乱序</span><span>跨屏 Ctrl+C/V</span></div>
+        <h3>Windows exe 正式交付</h3>
+        <p>交付包现在直接带 exe：<code>BridgeLink.exe</code>（22.7MB，无控制台，双击即用）
+           与 <code>BridgeLink-headless.exe</code>（8.1MB，带控制台，适合开发板 / 开机自启 / 看日志）。
+           顺手修掉打包版双击一闪就没的问题——Windows 控制台编码导致的
+           <code>UnicodeEncodeError</code>。</p>
+        <div class="fix__tags"><span>主程序 exe</span><span>免 GUI 版</span><span>启动不闪退</span></div>
       </article>
     </div>
   </div>
@@ -494,10 +519,11 @@
   <div class="wrap">
     <header class="sec-head">
       <span class="sec-head__kicker reveal" data-reveal="up">外观定制</span>
-      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">6 套主题 · 7 种强调色<br>9 种语言 · 80%~160% 缩放</h2>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">5 套主题 · 6 种强调色<br>9 种语言 · 80%~160% 缩放</h2>
       <p class="sec-head__lead reveal" data-reveal="up" data-delay="120">
-        下面是软件里真实存在的六套主题配色。点一下，右上角的网站主题也会跟着换——
-        这套设计令牌和应用内调色板是同一份来源。
+        下面是软件里真实存在的五套主题配色（浅色 / 深色 / 午夜 / 北欧极简 / 柔和暖阳）。
+        点一下，右上角的预览面板就会跟着换——这套设计令牌和应用内调色板是同一份来源，
+        色值直接取自软件源码里的 <code>theme.py</code>。
       </p>
     </header>
 
@@ -561,33 +587,34 @@
       <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">把延迟，<br>一毫秒一毫秒地削掉</h2>
       <p class="sec-head__lead reveal" data-reveal="up" data-delay="120">
         高 DPI 鼠标可达 1000Hz，一个“一卡一卡”的手感可能只是因为每帧都在重新解析配置。
-        4.7 逐项做了量化验证。
+        4.7 把这些都写进了自动化用例——<strong>428 项测试全绿</strong>，
+        主链路、界面渲染、跨平台后端、拖拽链路各有独立回归。
       </p>
     </header>
 
     <div class="perf">
       <div class="perf__card reveal" data-reveal="up" data-tilt>
-        <div class="perf__num"><span data-count="0.9" data-decimals="1">0</span><em>ms</em></div>
-        <p>取虚拟桌面矩形 × 10000 次</p>
-        <span class="perf__was">之前：每次 4 次系统调用</span>
-        <div class="perf__bar"><i style="--w:12%"></i></div>
+        <div class="perf__num"><span data-count="428" data-suffix=" 项">0</span></div>
+        <p>全量自动化用例全部通过</p>
+        <span class="perf__was">主链路 155 · 界面 195 · 平台 37 · 拖拽 29</span>
+        <div class="perf__bar"><i style="--w:100%"></i></div>
       </div>
       <div class="perf__card reveal" data-reveal="up" data-delay="90" data-tilt>
-        <div class="perf__num"><span data-count="0.3" data-decimals="1">0</span><em>ms</em></div>
-        <p>查设备配置 × 2000 次</p>
-        <span class="perf__was">之前：每次重建整个 PeerCfg 列表</span>
-        <div class="perf__bar"><i style="--w:8%"></i></div>
+        <div class="perf__num"><span data-count="5" data-suffix=" 套">0</span></div>
+        <p>内置主题 × 6 种强调色</p>
+        <span class="perf__was">还能自定义前景 / 面板 / 描边 / 强调色</span>
+        <div class="perf__bar"><i style="--w:83%"></i></div>
       </div>
       <div class="perf__card reveal" data-reveal="up" data-delay="180" data-tilt>
-        <div class="perf__num"><span data-count="64">0</span><em>帧/次</em></div>
-        <p>已就绪的网络帧合并成一次 sendall</p>
-        <span class="perf__was">之前：一帧一次 sendall</span>
-        <div class="perf__bar"><i style="--w:74%"></i></div>
+        <div class="perf__num"><span data-count="9" data-suffix=" 种">0</span></div>
+        <p>界面语言，切换即时重译</p>
+        <span class="perf__was">简中 / 繁中 / 英 / 日 / 韩 / 德 / 法 / 西 / 俄</span>
+        <div class="perf__bar"><i style="--w:100%"></i></div>
       </div>
       <div class="perf__card reveal" data-reveal="up" data-delay="270" data-tilt>
-        <div class="perf__num"><span data-count="6" data-suffix="/6">0</span></div>
-        <p>ctest 自动化用例全部通过</p>
-        <span class="perf__was">另有协议 8/8 · 会话 18/18 · 菜单逐项一致</span>
+        <div class="perf__num"><span data-count="3" data-suffix=" 平台">0</span></div>
+        <p>Windows / Linux / macOS 注入后端</p>
+        <span class="perf__was">另有免 GUI 硬件模式，纯标准库 HTTP+SSE</span>
         <div class="perf__bar"><i style="--w:100%"></i></div>
       </div>
     </div>
@@ -595,12 +622,12 @@
     <div class="stack reveal" data-reveal="up">
       <h3 class="stack__title">技术栈</h3>
       <div class="stack__row">
-        <div class="stack__item"><b>C++17 + Qt6 Widgets</b><span>原生重写，不引入任何第三方键鼠库，输入注入走系统 API</span></div>
+        <div class="stack__item"><b>纯 Python + PyQt6</b><span>不引入任何第三方键鼠库，输入注入走系统 API，打包后约 23MB</span></div>
         <div class="stack__item"><b>自研二进制帧协议</b><span>magic + type + len 自描述，接收端流式解析，新旧版字节级一致</span></div>
         <div class="stack__item"><b>UDP 8898 发现 · TCP 8899 控制</b><span>局域网内明文传输，仅限可信网络</span></div>
-        <div class="stack__item"><b>CMake 交叉编译交付</b><span>Windows x64 免安装包 25MB，Linux x86_64 自包含包 9MB</span></div>
-        <div class="stack__item"><b>命令行友好</b><span><code>--device</code> / <code>--port</code> / <code>--connect</code> / <code>--headless</code></span></div>
-        <div class="stack__item"><b>配置自动迁移</b><span><code>%APPDATA%\BridgeLink\config.json</code>，旧版配置自动升级并留备份</span></div>
+        <div class="stack__item"><b>三平台注入后端</b><span>Windows <code>SendInput</code>、Linux X11、macOS CoreGraphics</span></div>
+        <div class="stack__item"><b>命令行友好</b><span><code>--peer</code> / <code>--port</code> / <code>--tray</code> / <code>--headless</code></span></div>
+        <div class="stack__item"><b>免 GUI 硬件模式</b><span>纯标准库 HTTP+SSE 的浏览器控制端，下载到开发板就能用</span></div>
       </div>
     </div>
   </div>
@@ -647,11 +674,12 @@
           <span>复制</span>
         </button>
       </div>
-      <pre><code id="cliCode">bridgelink.exe --device 考场机A --port 8899
-bridgelink.exe --connect 192.168.1.23:8899
-bridgelink.exe --minimized              # 启动后最小化到托盘
-bridgelink.exe --headless --seconds 60  # 无界面模式，跑 60 秒后退出（脚本化 / 巡检）
-bridgelink.exe --version</code></pre>
+      <pre><code id="cliCode">BridgeLink.exe --peer 192.168.1.23@right --peer 192.168.1.24@left
+BridgeLink.exe --peers "192.168.1.23@right,192.168.1.24@up" --name 考场机A
+BridgeLink.exe --port 8899 --max-peers 0        # 监听端口；0 = 设备数不限
+BridgeLink.exe --tray                        # 启动即最小化到托盘
+BridgeLink.exe --headless --web-port 8890     # 免 GUI 模式，浏览器打开 http://本机IP:8890/
+BridgeLink.exe --selftest 12                 # 自检 12 秒并写报告到 %TEMP%</code></pre>
     </div>
   </div>
 </section>
@@ -701,8 +729,9 @@ bridgelink.exe --version</code></pre>
       <div class="dl__content">
         <span class="dl__ver">4.7</span>
         <h2>把第二台电脑，<br>接到你的手上</h2>
-        <p>C++17 + Qt6 Widgets 原生实现。Windows x64 免安装包 25MB、Linux x86_64 自包含包 9MB，
-           解压即用。功能与旧版完全一致，4.7 修掉二十处界面差异与五条真实反馈。</p>
+        <p>纯 Python + PyQt6 实现，不依赖任何第三方键鼠库。Windows 免安装包 23MB，
+           解压即用；Linux / macOS 源码同包提供，可自行编译。
+           4.7 正式更名 BridgeLink，并新增贴边感应带跨屏拖拽文件。</p>
         <div class="dl__btns">
           <a class="btn btn--primary btn--lg" href="downloads/BridgeLink_4.7.exe" download="BridgeLink_4.7.exe" data-magnetic data-ripple>
             <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m0 0 4.5-4.5M12 16l-4.5-4.5M4 19.5h16"/></svg>
@@ -714,7 +743,7 @@ bridgelink.exe --version</code></pre>
           </a>
         </div>
         <div class="dl__meta">
-          <span><b>25</b> MB</span><span><b>Windows</b> 10 / 11</span><span><b>Linux</b> x86_64</span><span><b>免</b> 安装</span>
+          <span><b>23</b> MB</span><span><b>Windows</b> 10 / 11</span><span><b>Linux</b> / <b>macOS</b></span><span><b>免</b> 安装</span>
         </div>
       </div>
       <div class="dl__visual" aria-hidden="true">
