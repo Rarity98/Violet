@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-accent="blue">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BridgeLink 4.7 — 一套键鼠，管住所有电脑 | 局域网键鼠共享 / 远程控制 / 剪贴板同步</title>
+<meta name="description" content="BridgeLink 是一款局域网键鼠共享与远程控制工具：鼠标撞边自动跨屏、一键接管任意设备、剪贴板文字/图片/文件三合一同步。C++17 + Qt6 Widgets 原生实现，Windows 免安装包 25MB。">
+<meta name="keywords" content="BridgeLink,键鼠共享,远程控制,剪贴板同步,跨屏,KVM,局域网,Windows,Linux,C++,Qt6,开源">
+<meta property="og:title" content="BridgeLink 4.7 — 一套键鼠，管住所有电脑">
+<meta property="og:description" content="键鼠共享 · 远程控制 · 剪贴板三合一同步。C++17 + Qt6 Widgets 原生实现，Windows 免安装包 25MB。">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/img/app_icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ══════════ 滚动进度条 ══════════ -->
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"><span></span></div>
+
+<!-- ══════════ 自定义光标（桌面端） ══════════ -->
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<!-- ══════════ 顶部导航 ══════════ -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="brand" href="#top" data-magnetic>
+      <span class="brand__mark">
+        <img src="assets/img/app_icon.png" alt="BridgeLink 图标">
+      </span>
+      <span class="brand__text">
+        <strong>BridgeLink</strong>
+        <em>4.7</em>
+      </span>
+    </a>
+
+    <nav class="nav__links" id="navLinks" aria-label="主导航">
+      <a href="#features" data-nav><span>核心能力</span></a>
+      <a href="#demo" data-nav><span>交互演示</span></a>
+      <a href="#compare" data-nav><span>两条主线</span></a>
+      <a href="#v47" data-nav><span>4.7 更新</span></a>
+      <a href="#themes" data-nav><span>外观定制</span></a>
+      <a href="#perf" data-nav><span>性能</span></a>
+      <a href="#faq" data-nav><span>常见问题</span></a>
+      <span class="nav__indicator" id="navIndicator" aria-hidden="true"></span>
+    </nav>
+
+    <div class="nav__actions">
+      <button class="icon-btn" id="accentBtn" title="切换强调色" aria-label="切换强调色">
+        <span class="swatch" id="accentSwatch"></span>
+      </button>
+      <button class="icon-btn" id="themeBtn" title="切换明暗主题" aria-label="切换明暗主题">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.2 12H2M22 12h-2.2M5.6 5.6 7.4 7.4M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>
+      </button>
+      <a class="btn btn--sm btn--primary" href="downloads/LanKVM_v4.5.exe" download="LanKVM_v4.5.exe" data-magnetic data-ripple>
+        <span>下载</span>
+      </a>
+      <button class="nav__burger" id="navBurger" aria-label="打开菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- 强调色选择面板 -->
+<div class="accent-panel" id="accentPanel" hidden>
+  <p class="accent-panel__title">强调色</p>
+  <div class="accent-panel__grid" id="accentGrid"></div>
+</div>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero" id="top">
+  <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero__aurora" aria-hidden="true">
+    <span class="blob blob--1"></span>
+    <span class="blob blob--2"></span>
+    <span class="blob blob--3"></span>
+  </div>
+  <div class="hero__grid-lines" aria-hidden="true"></div>
+
+  <div class="wrap hero__inner">
+    <div class="hero__copy">
+      <div class="eyebrow reveal" data-reveal="up">
+        <span class="eyebrow__dot"></span>
+        <span class="eyebrow__tag">4.7</span>
+        <span class="eyebrow__text">局域网键鼠共享 · 远程控制 · 剪贴板同步</span>
+      </div>
+
+      <h1 class="hero__title reveal" data-reveal="chars">
+        <span class="line"><span class="line__in">一套键鼠</span></span>
+        <span class="line"><span class="line__in">管住<em>所有</em>电脑</span></span>
+      </h1>
+
+      <p class="hero__lead reveal" data-reveal="up" data-delay="120">
+        把多台机器拼成一块<strong>虚拟大屏</strong>。鼠标撞到屏幕边缘就跨过去，键盘跟着走；
+        需要时一键接管任意一台；剪贴板的文字、图片、文件自动跟着你跑。
+      </p>
+
+      <div class="hero__cta reveal" data-reveal="up" data-delay="200">
+        <a class="btn btn--primary btn--lg" href="downloads/LanKVM_v4.5.exe" download="LanKVM_v4.5.exe" data-magnetic data-ripple>
+          <span>下载 BridgeLink 4.7</span>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m0 0 4.5-4.5M12 16l-4.5-4.5M4 19.5h16"/></svg>
+        </a>
+        <a class="btn btn--ghost btn--lg" href="#demo" data-magnetic data-ripple>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M10 8.6 15.4 12 10 15.4Z"/></svg>
+          <span>看它怎么工作</span>
+        </a>
+      </div>
+
+      <dl class="hero__stats reveal" data-reveal="up" data-delay="280">
+        <div><dt data-count="25" data-prefix="" data-suffix=" MB">0</dt><dd>Windows 免安装包</dd></div>
+        <div><dt data-count="9" data-suffix=" 种">0</dt><dd>界面语言</dd></div>
+        <div><dt data-count="6" data-suffix=" 套">0</dt><dd>内置主题</dd></div>
+        <div><dt data-count="0" data-text="不限">不限</dt><dd>可接设备数</dd></div>
+      </dl>
+    </div>
+
+    <!-- 应用窗口模拟 -->
+    <div class="hero__app reveal" data-reveal="scale" data-delay="160">
+      <div class="appframe" id="appFrame">
+        <div class="appframe__glow" aria-hidden="true"></div>
+        <div class="appframe__window">
+          <div class="appframe__titlebar">
+            <span class="tl-dot tl-dot--r"></span><span class="tl-dot tl-dot--y"></span><span class="tl-dot tl-dot--g"></span>
+            <span class="appframe__title">BridgeLink 4.7 · 设备</span>
+            <span class="appframe__wbtns"><i></i><i></i><i class="is-close"></i></span>
+          </div>
+          <div class="appframe__body">
+            <aside class="appframe__side">
+              <span class="side__item is-active"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M9 20h6M12 16.5V20"/></svg><i>设备</i></span>
+              <span class="side__item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h18M12 3v18"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><i>键鼠共享</i></span>
+              <span class="side__item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3.6"/></svg><i>远程控制</i></span>
+              <span class="side__item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="4.5" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h4"/></svg><i>剪贴板</i></span>
+              <span class="side__item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3.5h9l4 4v13H6z"/><path d="M9 12h7M9 16h5"/></svg><i>日志</i></span>
+              <span class="side__item"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.9 19.3a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.7 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.7 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.7h.03A1.7 1.7 0 0 0 10 3.14V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.1 4.7a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.3 9v.03A1.7 1.7 0 0 0 20.86 10H21a2 2 0 1 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></svg><i>设置</i></span>
+            </aside>
+            <div class="appframe__main">
+              <div class="appframe__top">
+                <span class="pill pill--host">TEST-PC</span>
+                <span class="mono">192.168.1.5</span>
+                <span class="pill pill--live">● 键鼠共享中</span>
+              </div>
+              <div class="appframe__banner">
+                <span class="appframe__banner-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14m0 0-5-5m5 5-5 5"/></svg></span>
+                <span>光标现在归 <b>TEST-PC</b>，其余 3 台待命</span>
+              </div>
+              <div class="appframe__map">
+                <div class="map__grid">
+                  <div class="map__cell map__cell--peer" data-peer="LAB-01">
+                    <span class="map__name">LAB-01</span><span class="map__ip">192.168.1.23</span>
+                  </div>
+                  <div class="map__cell map__cell--me is-active" data-peer="me">
+                    <span class="map__name">TEST-PC</span><span class="map__ip">192.168.1.5</span>
+                    <span class="map__badge">本机</span>
+                  </div>
+                  <div class="map__cell map__cell--peer" data-peer="OFFICE-2">
+                    <span class="map__name">OFFICE-2</span><span class="map__ip">192.168.1.24</span>
+                  </div>
+                </div>
+                <div class="map__cursor" id="heroCursor">
+                  <svg viewBox="0 0 24 24" width="18" height="18"><path d="M5.5 2.8 19 11.2l-5.6 1.5 3.1 6.1-2.4 1.2-3-6.1-4.2 4Z" fill="currentColor" stroke="rgba(0,0,0,.35)" stroke-width="1"/></svg>
+                </div>
+              </div>
+              <div class="appframe__status">
+                <span>就绪 · 192.168.1.5 · 端口 8899</span>
+                <span class="mono">出站 3 · 入站 0 · 键鼠事件 12,847</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="floatcard floatcard--a" data-float="1">
+        <span class="floatcard__ic floatcard__ic--ok"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 12.5 5 5 10-11"/></svg></span>
+        <div><b>鼠标撞边已跨屏</b><i>→ OFFICE-2 · 光标归属已移交</i></div>
+      </div>
+      <div class="floatcard floatcard--b" data-float="2">
+        <span class="floatcard__ic floatcard__ic--accent"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8m0 0-3-3m3 3-3 3"/></svg></span>
+        <div><b>剪贴板已同步</b><i>文字 · 图片 · 文件 三合一</i></div>
+      </div>
+    </div>
+  </div>
+
+  <a class="scroll-hint" href="#features" aria-label="向下滚动">
+    <span class="scroll-hint__line"><i></i></span>
+    <span class="scroll-hint__txt">向下滚动</span>
+  </a>
+</section>
+
+<!-- ══════════ 能力跑马灯 ══════════ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track" id="marqueeTrack">
+    <span>键鼠共享</span><i>·</i><span>远程控制</span><i>·</i><span>剪贴板三合一</span><i>·</i>
+    <span>跨屏拖拽复制粘贴</span><i>·</i><span>唯一光标归属</span><i>·</i><span>防套娃保护</span><i>·</i>
+    <span>9 种语言</span><i>·</i><span>6 套主题</span><i>·</i><span>7 种强调色</span><i>·</i>
+    <span>界面缩放 80%~160%</span><i>·</i><span>自定义背景图</span><i>·</i><span>托盘常驻</span><i>·</i>
+  </div>
+</div>
+
+<!-- ══════════ 核心能力 ══════════ -->
+<section class="section" id="features">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="sec-head__kicker reveal" data-reveal="up">核心能力</span>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">三个平级动作，<br>决定“键鼠现在归谁”</h2>
+      <p class="sec-head__lead reveal" data-reveal="up" data-delay="120">
+        连接（建链）、键鼠共享（跨屏用）、远程控制（接管）是三个互不隶属的平级动作。
+        连接可以一直挂着，共享与远程控制只决定键鼠的归属。
+      </p>
+    </header>
+
+    <div class="bento">
+      <article class="bcard bcard--wide reveal" data-reveal="up" data-tilt>
+        <div class="bcard__glow" aria-hidden="true"></div>
+        <div class="bcard__col">
+          <div class="bcard__ic bcard__ic--accent">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M9 20h6M12 16.5V20M2.5 10.2h19"/></svg>
+          </div>
+          <h3>键鼠共享</h3>
+          <p>把设备摆成二维网格，拼成任意形状的虚拟大屏。鼠标撞到边缘就走到相邻设备，可以连续走完整张大屏。</p>
+        </div>
+        <ul class="ticks">
+          <li>任意时刻只有一台显示光标，其余待命</li>
+          <li>撞边自动跨屏开关，位置可拖拽调整</li>
+          <li>实时画出设备间的方位箭头</li>
+          <li>被控端本地键鼠完全锁死，不会互相抢</li>
+        </ul>
+      </article>
+
+      <article class="bcard reveal" data-reveal="up" data-delay="80" data-tilt>
+        <div class="bcard__glow" aria-hidden="true"></div>
+        <div class="bcard__ic">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3.4"/><path d="M12 1.6v2.2M12 20.2v2.2"/></svg>
+        </div>
+        <h3>远程控制</h3>
+        <p>勾选一台专注操作，或勾“全部”多台同步接管。两阶段授权：对方点下“允许”之前，不会接管本机。</p>
+        <ul class="ticks">
+          <li>被控端本地键鼠完全锁死</li>
+          <li>鼠标锁在对方屏幕内，不撞边退出</li>
+          <li>被控端可随时单方面结束</li>
+        </ul>
+      </article>
+
+      <article class="bcard reveal" data-reveal="up" data-delay="140" data-tilt>
+        <div class="bcard__glow" aria-hidden="true"></div>
+        <div class="bcard__ic">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4.5" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h4"/></svg>
+        </div>
+        <h3>剪贴板三合一</h3>
+        <p>文字、图片、文件三路同步，还能跨屏直接 Ctrl+C / Ctrl+V。拖动一个文件到隔壁屏幕，落点直接就位。</p>
+        <ul class="ticks">
+          <li>只在光标位于对端时接管，本机操作不受影响</li>
+          <li>跨屏拖拽复制粘贴，4.7 全链路打通</li>
+          <li>单批上限、接收目录、进度条</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="guard reveal" data-reveal="up">
+      <div class="guard__head">
+        <span class="guard__ic">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 4.5 6v6c0 4.6 3.1 8.4 7.5 9.4 4.4-1 7.5-4.8 7.5-9.4V6Z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
+        </span>
+        <div>
+          <h3>防套娃 / 单主控保护</h3>
+          <p>三条硬约束，保证你的局域网不会串成一串。</p>
+        </div>
+      </div>
+      <div class="guard__items">
+        <div class="guard__item"><b>不能反向控制</b><span>本机正被别人控制时，无法再连接或控制其他电脑。</span></div>
+        <div class="guard__item"><b>拒绝被套娃</b><span>本机正在控制别人时，拒绝第三方向本机发起控制。</span></div>
+        <div class="guard__item"><b>唯一主控</b><span>同一时刻只允许一个控制端抓住本机，第二个被明确拒绝并写日志。</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 交互演示 ══════════ -->
+<section class="section section--alt" id="demo">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="sec-head__kicker reveal" data-reveal="up">交互演示</span>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">亲手拖一拖，<br>感受“虚拟大屏”</h2>
+      <p class="sec-head__lead reveal" data-reveal="up" data-delay="120">
+        下面这块布局图就是软件里的真实交互：拖动设备可以换位置，被占用的格子会自动互换。
+      </p>
+    </header>
+
+    <div class="demo reveal" data-reveal="scale">
+      <div class="demo__tabs" role="tablist">
+        <button class="demo__tab is-active" role="tab" data-demo-tab="share" aria-selected="true">键鼠共享</button>
+        <button class="demo__tab" role="tab" data-demo-tab="remote" aria-selected="false">远程控制</button>
+        <button class="demo__tab" role="tab" data-demo-tab="clip" aria-selected="false">剪贴板同步</button>
+        <span class="demo__tab-ink" id="demoTabInk" aria-hidden="true"></span>
+      </div>
+
+      <div class="demo__stage">
+        <!-- 键鼠共享 -->
+        <div class="demo__panel is-active" data-demo-panel="share">
+          <div class="vgrid" id="vgrid">
+            <div class="vgrid__cell is-me" data-cell="0" style="--c:2;--r:2">
+              <span class="vgrid__name">TEST-PC</span><span class="vgrid__ip">192.168.1.5</span>
+              <span class="vgrid__tag vgrid__tag--me">本机</span>
+            </div>
+            <div class="vgrid__cell" data-cell="1" style="--c:3;--r:2">
+              <span class="vgrid__name">LAB-01</span><span class="vgrid__ip">192.168.1.23</span>
+              <span class="vgrid__tag">右侧</span>
+            </div>
+            <div class="vgrid__cell" data-cell="2" style="--c:1;--r:2">
+              <span class="vgrid__name">OFFICE-2</span><span class="vgrid__ip">192.168.1.24</span>
+              <span class="vgrid__tag">左侧</span>
+            </div>
+            <div class="vgrid__cell" data-cell="3" style="--c:2;--r:1">
+              <span class="vgrid__name">DEMO-3</span><span class="vgrid__ip">192.168.1.31</span>
+              <span class="vgrid__tag">上方</span>
+            </div>
+            <div class="vgrid__cell" data-cell="4" style="--c:2;--r:3">
+              <span class="vgrid__name">ROOM-4</span><span class="vgrid__ip">192.168.1.42</span>
+              <span class="vgrid__tag">下方</span>
+            </div>
+            <svg class="vgrid__cursor" id="demoCursor" viewBox="0 0 24 24"><path d="M5.5 2.8 19 11.2l-5.6 1.5 3.1 6.1-2.4 1.2-3-6.1-4.2 4Z"/></svg>
+          </div>
+          <div class="demo__side">
+            <div class="demo__readout">
+              <span class="demo__readout-k">当前状态</span>
+              <b id="demoOwner">光标归属 TEST-PC</b>
+              <span class="demo__readout-s" id="demoStandby">3 台设备待命中</span>
+            </div>
+            <div class="demo__readout">
+              <span class="demo__readout-k">鼠标位置</span>
+              <b class="mono" id="demoCoords">x 1024 · y 618</b>
+              <span class="demo__readout-s">撞到屏幕边缘时自动跨屏</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="demoSwitch" checked>
+              <span class="switch__track"><span class="switch__knob"></span></span>
+              <span class="switch__label">鼠标撞边自动跨屏</span>
+            </label>
+            <div class="demo__btns">
+              <button class="btn btn--sm btn--soft" id="demoStart" data-ripple>开始共享</button>
+              <button class="btn btn--sm btn--ghost" id="demoStop" data-ripple>停止共享</button>
+            </div>
+            <p class="demo__hint">提示：按住任意设备方块拖动即可换位置。</p>
+          </div>
+        </div>
+
+        <!-- 远程控制 -->
+        <div class="demo__panel" data-demo-panel="remote">
+          <div class="demo__twocol">
+            <div class="rtable">
+              <div class="rtable__head"><span>设备</span><span>地址</span><span>状态</span></div>
+              <label class="rtable__row"><input type="checkbox" checked><span>LAB-01</span><span class="mono">192.168.1.23</span><span class="rtable__st is-on">已连接</span></label>
+              <label class="rtable__row"><input type="checkbox" checked><span>OFFICE-2</span><span class="mono">192.168.1.24</span><span class="rtable__st is-on">已连接</span></label>
+              <label class="rtable__row"><input type="checkbox"><span>DEMO-3</span><span class="mono">192.168.1.31</span><span class="rtable__st">待命</span></label>
+              <label class="rtable__row"><input type="checkbox"><span>ROOM-4</span><span class="mono">192.168.1.42</span><span class="rtable__st">离线</span></label>
+            </div>
+            <div class="rdetail">
+              <div class="rdetail__banner">
+                <span class="rdetail__spin"></span>
+                <div><b>等待对方确认</b><i>两阶段授权：对方点“允许”之前不接管本机</i></div>
+              </div>
+              <ul class="rdetail__list">
+                <li>鼠标锁在对方屏幕内，撞边不切换也不退出</li>
+                <li>每台设备各自保留一个光标</li>
+                <li>结束热键 <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>F12</kbd></li>
+              </ul>
+              <div class="demo__btns">
+                <button class="btn btn--sm btn--soft" data-ripple>开始远程控制</button>
+                <button class="btn btn--sm btn--danger" data-ripple>结束远程控制</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 剪贴板 -->
+        <div class="demo__panel" data-demo-panel="clip">
+          <div class="demo__twocol">
+            <div class="clipcard">
+              <div class="clipcard__head"><span class="clipcard__ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M8 6h11M8 12h11M8 18h11"/></svg></span>本机剪贴板</div>
+              <div class="clipcard__body">
+                <div class="clipitem is-active"><span class="clipitem__ic clipitem__ic--txt">T</span><div><b>文字片段</b><i>design-system.md</i></div><span class="clipitem__ok">✓</span></div>
+                <div class="clipitem"><span class="clipitem__ic clipitem__ic--img">◨</span><div><b>图片</b><i>screenshot.png · 248 KB</i></div></div>
+                <div class="clipitem"><span class="clipitem__ic clipitem__ic--file">▤</span><div><b>文件</b><i>3 个文件 · 1.2 MB</i></div></div>
+              </div>
+              <div class="clipcard__foot">
+                <kbd>Ctrl</kbd>+<kbd>C</kbd> 取回对端选中内容 · <kbd>Ctrl</kbd>+<kbd>V</kbd> 送到对端粘贴
+              </div>
+            </div>
+            <div class="clipflow" aria-hidden="true">
+              <span class="clipflow__node">TEST-PC</span>
+              <span class="clipflow__line"><i></i></span>
+              <span class="clipflow__node clipflow__node--on">LAB-01</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 两条主线对比 ══════════ -->
+<section class="section" id="compare">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="sec-head__kicker reveal" data-reveal="up">两条主线</span>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">共享，还是接管？</h2>
+      <p class="sec-head__lead reveal" data-reveal="up" data-delay="120">
+        两者的目标数量、设备排布与结束方式完全不同。选错了体验会完全不一样。
+      </p>
+    </header>
+
+    <div class="cmp reveal" data-reveal="up">
+      <div class="cmp__head">
+        <div></div>
+        <div class="cmp__col cmp__col--a"><span class="cmp__dot cmp__dot--a"></span>键鼠共享</div>
+        <div class="cmp__col cmp__col--b"><span class="cmp__dot cmp__dot--b"></span>远程控制</div>
+      </div>
+      <div class="cmp__body">
+        <div class="cmp__row"><div class="cmp__k">目标数量</div><div class="cmp__v">任意时刻 <b>1 台显示光标</b>，其余待命</div><div class="cmp__v">1 台，勾“全部” = N 台同步</div></div>
+        <div class="cmp__row"><div class="cmp__k">设备排布</div><div class="cmp__v"><b>二维网格</b>，可拼成任意形状的大屏</div><div class="cmp__v">与排布无关</div></div>
+        <div class="cmp__row"><div class="cmp__k">鼠标行为</div><div class="cmp__v">撞边跨到相邻设备，可连续走完整张大屏</div><div class="cmp__v">锁在对方屏幕内，<b>撞边不切换也不退出</b></div></div>
+        <div class="cmp__row"><div class="cmp__k">光标</div><div class="cmp__v"><b>全系统只有一个</b>，其余设备屏幕无光标</div><div class="cmp__v">每台各自一个，锁在对方屏幕内</div></div>
+        <div class="cmp__row"><div class="cmp__k">被控端键鼠</div><div class="cmp__v"><b>完全锁死</b>（无任何键鼠权限）</div><div class="cmp__v"><b>完全锁死</b></div></div>
+        <div class="cmp__row"><div class="cmp__k">授权</div><div class="cmp__v">对端同意后加入大屏</div><div class="cmp__v"><b>两阶段</b>：对方点“允许”前不接管本机</div></div>
+        <div class="cmp__row"><div class="cmp__k">结束方式</div><div class="cmp__v">推回边缘 / 热键 / 停止共享</div><div class="cmp__v">热键 / 结束按钮 / 被控端自行结束</div></div>
+        <div class="cmp__row"><div class="cmp__k">连接</div><div class="cmp__v">不断开</div><div class="cmp__v">不断开</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 4.7 更新 ══════════ -->
+<section class="section section--alt" id="v47">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="sec-head__kicker reveal" data-reveal="up">4.7 更新</span>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">原生重写，<br>一比一复刻</h2>
+      <p class="sec-head__lead reveal" data-reveal="up" data-delay="120">
+        4.7 把整套实现从 Python + PyQt6 换成 <strong>C++17 + Qt6 Widgets</strong> 原生重写——
+        不是翻译，是按同一套协议重新实现。功能、布局、文案逐项对齐，
+        并把上一版遗留的五条真实反馈一并修掉。
+      </p>
+    </header>
+
+    <div class="fixes">
+      <article class="fix reveal" data-reveal="up" data-tilt>
+        <span class="fix__no">01</span>
+        <h3>C++ 原生内核，协议字节级一致</h3>
+        <p>帧格式、魔数、消息编号、负载布局全部与旧版<strong>一字不改</strong>，
+           新旧客户端可直接互联。输入注入按平台编译：
+           Windows <code>SendInput</code>、Linux <code>XTest</code>、macOS <code>CGEvent</code>。</p>
+        <div class="fix__tags"><span>QDataStream</span><span>三平台注入</span><span>防回环注入</span></div>
+      </article>
+      <article class="fix reveal" data-reveal="up" data-delay="80" data-tilt>
+        <span class="fix__no">02</span>
+        <h3>界面逐页对齐，不是"看着差不多"</h3>
+        <p>六页界面逐项比对，共修掉 <strong>20 处实质差异</strong>：背景图系统整个缺失、
+           日志页缺导出、剪贴板勾选框默认全空、状态栏文案不对、置顶图标无状态……
+           背景图四种填充模式 × 三档模糊与旧版<strong>逐像素一致（rgb_max = 0）</strong>。</p>
+        <div class="fix__tags"><span>20 处差异</span><span>像素级比对</span><span>右键菜单 8 项</span></div>
+      </article>
+      <article class="fix reveal" data-reveal="up" data-delay="160" data-tilt>
+        <span class="fix__no">03</span>
+        <h3>355 个界面词条 × 9 语言，即时生效</h3>
+        <p>旧版只做了菜单栏的 68 个词条，这一版把 355 个 key 全量接入，
+           切换语言后<strong>整个界面即时重译</strong>，侧栏、按钮、状态栏、说明文字同步切换，不用重启。</p>
+        <div class="fix__tags"><span>355 × 9</span><span>即时重译</span><span>6 主题 × 6 强调色</span></div>
+      </article>
+      <article class="fix reveal" data-reveal="up" data-delay="240" data-tilt>
+        <span class="fix__no">04</span>
+        <h3>所有按钮都真的能按下去</h3>
+        <p>自定义按钮基类原本<strong>一次点击发两次信号</strong>，导致勾选态翻两次抵消回原值——
+           左侧菜单的"收起 / 展开"就是因此失效的。现在点击只触发一次，
+           并新增全量回归：<strong>53 个可用按钮逐个模拟按下抬起</strong>，断言每个恰好触发一次。</p>
+        <div class="fix__tags"><span>单次点击语义</span><span>53 按钮全量回归</span><span>文本完整性扫描</span></div>
+      </article>
+      <article class="fix reveal" data-reveal="up" data-delay="320" data-tilt>
+        <span class="fix__no">05</span>
+        <h3>跨屏拖拽真正落地</h3>
+        <p>旧版整条链路都断着：两个信号只发不接、跨屏逻辑从没被调用、
+           载荷被当普通剪贴板同步写回自己。4.7 把三段全部接上，
+           文字与图片可跨屏拖拽复制粘贴，抗乱序已验证。</p>
+        <div class="fix__tags"><span>三段式载荷中转</span><span>抗乱序</span><span>跨屏 Ctrl+C/V</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 外观定制 ══════════ -->
+<section class="section" id="themes">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="sec-head__kicker reveal" data-reveal="up">外观定制</span>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">6 套主题 · 7 种强调色<br>9 种语言 · 80%~160% 缩放</h2>
+      <p class="sec-head__lead reveal" data-reveal="up" data-delay="120">
+        下面是软件里真实存在的六套主题配色。点一下，右上角的网站主题也会跟着换——
+        这套设计令牌和应用内调色板是同一份来源。
+      </p>
+    </header>
+
+    <div class="themes">
+      <div class="themes__picker reveal" data-reveal="up">
+        <p class="themes__label">应用内主题</p>
+        <div class="themes__list" id="themeList"></div>
+        <p class="themes__label themes__label--sp">网站强调色</p>
+        <div class="themes__accents" id="accentList2"></div>
+      </div>
+
+      <div class="themes__preview reveal" data-reveal="scale" data-delay="120">
+        <div class="pv">
+          <div class="pv__bar">
+            <span class="pv__dot"></span><span class="pv__dot"></span><span class="pv__dot"></span>
+            <span class="pv__title">BridgeLink 4.7 · 外观预览</span>
+          </div>
+          <div class="pv__body">
+            <aside class="pv__side">
+              <span class="pv__nav is-on">设备</span>
+              <span class="pv__nav">键鼠共享</span>
+              <span class="pv__nav">远程控制</span>
+              <span class="pv__nav">剪贴板</span>
+              <span class="pv__nav">设置</span>
+            </aside>
+            <div class="pv__main">
+              <div class="pv__row">
+                <span class="pv__chip pv__chip--accent">本机</span>
+                <span class="pv__txt">TEST-PC · 192.168.1.5</span>
+              </div>
+              <div class="pv__card">
+                <div class="pv__line"></div>
+                <div class="pv__line pv__line--short"></div>
+                <div class="pv__line pv__line--mid"></div>
+              </div>
+              <div class="pv__btns">
+                <span class="pv__btn pv__btn--accent">连接</span>
+                <span class="pv__btn">断开</span>
+                <span class="pv__btn pv__btn--ghost">全部连接</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="featurestrip reveal" data-reveal="up">
+      <div class="fstrip"><span class="fstrip__k">背景图</span><span class="fstrip__v">自定义本地图片 · 可调不透明度 / 模糊 / 遮罩 / 填充方式</span></div>
+      <div class="fstrip"><span class="fstrip__k">界面缩放</span><span class="fstrip__v">80% ~ 160% 无级缩放，改动立即预览</span></div>
+      <div class="fstrip"><span class="fstrip__k">多语言</span><span class="fstrip__v">简中 / 繁中 / 英 / 日 / 韩 / 德 / 法 / 西 / 俄</span></div>
+      <div class="fstrip"><span class="fstrip__k">过渡动效</span><span class="fstrip__v">标签指示条平滑滑动、内容淡入、按钮涟漪</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 性能 ══════════ -->
+<section class="section section--alt" id="perf">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="sec-head__kicker reveal" data-reveal="up">性能与质量</span>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">把延迟，<br>一毫秒一毫秒地削掉</h2>
+      <p class="sec-head__lead reveal" data-reveal="up" data-delay="120">
+        高 DPI 鼠标可达 1000Hz，一个“一卡一卡”的手感可能只是因为每帧都在重新解析配置。
+        4.7 逐项做了量化验证。
+      </p>
+    </header>
+
+    <div class="perf">
+      <div class="perf__card reveal" data-reveal="up" data-tilt>
+        <div class="perf__num"><span data-count="0.9" data-decimals="1">0</span><em>ms</em></div>
+        <p>取虚拟桌面矩形 × 10000 次</p>
+        <span class="perf__was">之前：每次 4 次系统调用</span>
+        <div class="perf__bar"><i style="--w:12%"></i></div>
+      </div>
+      <div class="perf__card reveal" data-reveal="up" data-delay="90" data-tilt>
+        <div class="perf__num"><span data-count="0.3" data-decimals="1">0</span><em>ms</em></div>
+        <p>查设备配置 × 2000 次</p>
+        <span class="perf__was">之前：每次重建整个 PeerCfg 列表</span>
+        <div class="perf__bar"><i style="--w:8%"></i></div>
+      </div>
+      <div class="perf__card reveal" data-reveal="up" data-delay="180" data-tilt>
+        <div class="perf__num"><span data-count="64">0</span><em>帧/次</em></div>
+        <p>已就绪的网络帧合并成一次 sendall</p>
+        <span class="perf__was">之前：一帧一次 sendall</span>
+        <div class="perf__bar"><i style="--w:74%"></i></div>
+      </div>
+      <div class="perf__card reveal" data-reveal="up" data-delay="270" data-tilt>
+        <div class="perf__num"><span data-count="6" data-suffix="/6">0</span></div>
+        <p>ctest 自动化用例全部通过</p>
+        <span class="perf__was">另有协议 8/8 · 会话 18/18 · 菜单逐项一致</span>
+        <div class="perf__bar"><i style="--w:100%"></i></div>
+      </div>
+    </div>
+
+    <div class="stack reveal" data-reveal="up">
+      <h3 class="stack__title">技术栈</h3>
+      <div class="stack__row">
+        <div class="stack__item"><b>C++17 + Qt6 Widgets</b><span>原生重写，不引入任何第三方键鼠库，输入注入走系统 API</span></div>
+        <div class="stack__item"><b>自研二进制帧协议</b><span>magic + type + len 自描述，接收端流式解析，新旧版字节级一致</span></div>
+        <div class="stack__item"><b>UDP 8898 发现 · TCP 8899 控制</b><span>局域网内明文传输，仅限可信网络</span></div>
+        <div class="stack__item"><b>CMake 交叉编译交付</b><span>Windows x64 免安装包 25MB，Linux x86_64 自包含包 9MB</span></div>
+        <div class="stack__item"><b>命令行友好</b><span><code>--device</code> / <code>--port</code> / <code>--connect</code> / <code>--headless</code></span></div>
+        <div class="stack__item"><b>配置自动迁移</b><span><code>%APPDATA%\BridgeLink\config.json</code>，旧版配置自动升级并留备份</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 快速上手 ══════════ -->
+<section class="section" id="start">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="sec-head__kicker reveal" data-reveal="up">30 秒上手</span>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">两台机器，<br>三步接通</h2>
+    </header>
+
+    <ol class="steps">
+      <li class="step reveal" data-reveal="up">
+        <span class="step__n">01</span>
+        <div class="step__body">
+          <h3>两台机器各跑一份 BridgeLink</h3>
+          <p>解压即用，无需安装、无需依赖。Windows 10 / 11 均可运行。</p>
+        </div>
+      </li>
+      <li class="step reveal" data-reveal="up" data-delay="90">
+        <span class="step__n">02</span>
+        <div class="step__body">
+          <h3>两边都点顶栏「启动监听」</h3>
+          <p>默认端口 8899。首次运行请允许防火墙放行 UDP 8898 / TCP 8899。</p>
+        </div>
+      </li>
+      <li class="step reveal" data-reveal="up" data-delay="180">
+        <span class="step__n">03</span>
+        <div class="step__body">
+          <h3>添加设备 → 连接 → 推到屏幕边缘</h3>
+          <p>在「设备」页填对方的局域网 IP，点连接。到「键鼠共享」页把对方摆到本机右边，
+             然后把鼠标推到屏幕最右边——键鼠就过去了。</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="cli reveal" data-reveal="up">
+      <div class="cli__head">
+        <span>命令行</span>
+        <button class="cli__copy" id="copyBtn" data-ripple>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+          <span>复制</span>
+        </button>
+      </div>
+      <pre><code id="cliCode">bridgelink.exe --device 考场机A --port 8899
+bridgelink.exe --connect 192.168.1.23:8899
+bridgelink.exe --minimized              # 启动后最小化到托盘
+bridgelink.exe --headless --seconds 60  # 无界面模式，跑 60 秒后退出（脚本化 / 巡检）
+bridgelink.exe --version</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FAQ ══════════ -->
+<section class="section section--alt" id="faq">
+  <div class="wrap wrap--narrow">
+    <header class="sec-head">
+      <span class="sec-head__kicker reveal" data-reveal="up">常见问题</span>
+      <h2 class="sec-head__title reveal" data-reveal="up" data-delay="60">排查与限制</h2>
+    </header>
+
+    <div class="faq" id="faqList">
+      <details class="faq__item reveal" data-reveal="up" open>
+        <summary><span>扫不到设备怎么办？</span><i></i></summary>
+        <div class="faq__body"><p>确认两台机器在同一网段、对方已点「启动监听」，并放行防火墙 UDP 8898 / TCP 8899；也可以用设备页的「深度扫描」逐个 IP 尝试。</p></div>
+      </details>
+      <details class="faq__item reveal" data-reveal="up" data-delay="60">
+        <summary><span>连上了但键鼠不动？</span><i></i></summary>
+        <div class="faq__body"><p>两边都用管理员身份运行（Windows 的 UIPI 会拦截跨权限注入），并确认设备列表里的「启用」是勾上的。</p></div>
+      </details>
+      <details class="faq__item reveal" data-reveal="up" data-delay="120">
+        <summary><span>撞边没反应？</span><i></i></summary>
+        <div class="faq__body"><p>检查「键鼠共享」页的「撞边自动跨屏」是否勾选，以及该方位是否有一台<strong>已连接</strong>的设备——只有待命设备不会响应撞边。</p></div>
+      </details>
+      <details class="faq__item reveal" data-reveal="up" data-delay="180">
+        <summary><span>远程控制动不了？</span><i></i></summary>
+        <div class="faq__body"><p>对方可能正停在「控制请求」弹窗等你点允许；也可能本机正被别的设备控制。顶栏横幅会写明当前状态。</p></div>
+      </details>
+      <details class="faq__item reveal" data-reveal="up" data-delay="240">
+        <summary><span>想退出却被对方按住？</span><i></i></summary>
+        <div class="faq__body"><p>被控端在「远程控制」页点「结束本机被控」即可单方面收回键鼠，控制端会同步结束。</p></div>
+      </details>
+      <details class="faq__item reveal" data-reveal="up" data-delay="300">
+        <summary><span>有哪些已知限制？</span><i></i></summary>
+        <div class="faq__body"><p>无法拦截 Ctrl+Alt+Del 等 Windows 安全序列；普通权限无法向管理员窗口注入；一台被控端同时只受一个控制端控制；明文 TCP 仅限可信局域网；UDP 发现不跨网段；边缘按整个虚拟桌面最外侧判定。</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 下载 ══════════ -->
+<section class="section section--dl" id="download">
+  <div class="wrap">
+    <div class="dl reveal" data-reveal="scale">
+      <div class="dl__glow" aria-hidden="true"></div>
+      <div class="dl__content">
+        <span class="dl__ver">4.7</span>
+        <h2>把第二台电脑，<br>接到你的手上</h2>
+        <p>C++17 + Qt6 Widgets 原生实现。Windows x64 免安装包 25MB、Linux x86_64 自包含包 9MB，
+           解压即用。功能与旧版完全一致，4.7 修掉二十处界面差异与五条真实反馈。</p>
+        <div class="dl__btns">
+          <a class="btn btn--primary btn--lg" href="downloads/LanKVM_v4.5.exe" download="LanKVM_v4.5.exe" data-magnetic data-ripple>
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m0 0 4.5-4.5M12 16l-4.5-4.5M4 19.5h16"/></svg>
+            <span>下载 BridgeLink 4.7</span>
+          </a>
+          <a class="btn btn--ghost btn--lg" href="https://github.com/lankvm/lankvm" target="_blank" rel="noopener" data-magnetic data-ripple>
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18c-4 1.2-4-2.2-6-2.7m12 5.4v-3.6c0-1 .1-1.4-.5-2 2.6-.3 5.1-1.3 5.1-5.7a4.4 4.4 0 0 0-1.2-3.1 4.1 4.1 0 0 0-.1-3.1s-1-.3-3.3 1.3a11.4 11.4 0 0 0-6 0C6.5 3 5.5 3.3 5.5 3.3a4.1 4.1 0 0 0-.1 3.1A4.4 4.4 0 0 0 4.2 9.6c0 4.4 2.5 5.4 5.1 5.7-.3.3-.6.8-.7 1.6-.6.3-2.3.8-3.3-1.1"/></svg>
+            <span>查看源码</span>
+          </a>
+        </div>
+        <div class="dl__meta">
+          <span><b>25</b> MB</span><span><b>Windows</b> 10 / 11</span><span><b>Linux</b> x86_64</span><span><b>免</b> 安装</span>
+        </div>
+      </div>
+      <div class="dl__visual" aria-hidden="true">
+        <div class="dl__orb dl__orb--1"></div>
+        <div class="dl__orb dl__orb--2"></div>
+        <div class="dl__ring"></div>
+        <img src="assets/img/app_icon.png" alt="" class="dl__icon">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 页脚 ══════════ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <a class="brand" href="#top">
+          <span class="brand__mark"><img src="assets/img/app_icon.png" alt="BridgeLink 图标"></span>
+          <span class="brand__text"><strong>BridgeLink</strong><em>4.7</em></span>
+        </a>
+        <p>一套键鼠，管住所有电脑。<br>局域网里的键鼠共享、远程控制与剪贴板同步工具。</p>
+      </div>
+      <nav class="footer__cols" aria-label="页脚导航">
+        <div><h4>功能</h4><a href="#features">键鼠共享</a><a href="#features">远程控制</a><a href="#features">剪贴板同步</a><a href="#compare">防套娃保护</a></div>
+        <div><h4>了解</h4><a href="#demo">交互演示</a><a href="#v47">更新日志</a><a href="#themes">外观定制</a><a href="#perf">性能数据</a></div>
+        <div><h4>支持</h4><a href="#faq">常见问题</a><a href="#start">快速上手</a><a href="#download">下载</a><a href="#top">回到顶部</a></div>
+      </nav>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 BridgeLink 4.7 · 局域网键鼠共享 / 远程控制 / 剪贴板同步</span>
+      <span class="footer__note">明文 TCP 协议，请仅在可信局域网内使用</span>
+    </div>
+  </div>
+</footer>
+
+<button class="totop" id="toTop" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
+</button>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
